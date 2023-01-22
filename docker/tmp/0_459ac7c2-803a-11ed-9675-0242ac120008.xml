@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wps:ExecuteResponse xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US" serviceInstance="http://localhost/cgi-bin/zoo_loader.cgi" statusLocation="http://localhost/cgi-bin/zoo_loader.cgi?request=Execute&amp;service=WPS&amp;version=1.0.0&amp;Identifier=GetStatus&amp;DataInputs=sid=459ac7c2-803a-11ed-9675-0242ac120008&amp;RawDataOutput=Result">
+  <wps:Process wps:processVersion="1">
+    <ows:Identifier>SAGA.ta_lighting.0</ows:Identifier>
+    <ows:Title>Analytical Hillshading</ows:Title>
+    <ows:Abstract>This tool performs an analytical hillshade computation for an elevation grid. The 'Standard' method simply calculates the angle at which light coming from the position of the light source would hit the surface. This method can produce angles greater than 90 degree. With the second method all values are kept within the range of 0-90 degree. It can be enhanced with shadowing effects, where shadowed cells will be marked with a value of exactly 90 degree. 'Shadows Only' creates a mask for the shadowed areas and sets all other cells to no-data. 'Combined Shading' takes the values of the standard method and multiplies these with the normalized slope. 'Ambient Occlusion' is based on the concepts of Tarini et al. (2006), but only the northern half-space is considered here. </ows:Abstract>
+  </wps:Process>
+  <wps:Status creationTime="2022-12-20T07:45:48Z">
+    <wps:ProcessSucceeded>The service "0" ran successfully.</wps:ProcessSucceeded>
+  </wps:Status>
+  <wps:ProcessOutputs>
+    <wps:Output>
+      <ows:Identifier>SHADE</ows:Identifier>
+      <ows:Title>Analytical Hillshading</ows:Title>
+      <ows:Abstract>The angle between the surface and the incoming light beams, measured in radians.</ows:Abstract>
+      <wps:Reference href="http://localhost/temp///Output_SHADE_459ac7c2-803a-11ed-9675-0242ac120008_1.tiff" mimeType="image/tiff"/>
+    </wps:Output>
+  </wps:ProcessOutputs>
+</wps:ExecuteResponse>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SAGA_METADATA>
+  <DATABASE></DATABASE>
+  <SOURCE>
+    <GDAL_DRIVER>GTiff</GDAL_DRIVER>
+    <AREA_OR_POINT>Area</AREA_OR_POINT>
+    <TIFFTAG_RESOLUTIONUNIT>1 (unitless)</TIFFTAG_RESOLUTIONUNIT>
+    <TIFFTAG_XRESOLUTION>1</TIFFTAG_XRESOLUTION>
+    <TIFFTAG_YRESOLUTION>1</TIFFTAG_YRESOLUTION>
+    <Band></Band>
+  </SOURCE>
+  <HISTORY saga-version="7.3.0">
+    <TOOL library="io_gdal" id="0" name="Import Raster">
+      <OPTION type="file" id="FILES" name="Files">/tmp/zTmp//9f22cac4b11e2a374bacf1f6a58d8e81.zca</OPTION>
+      <OPTION type="choice" id="MULTIPLE" name="Multiple Bands Output" index="2">automatic</OPTION>
+      <OPTION type="text" id="SELECTION" name="Select from Multiple Bands"/>
+      <OPTION type="boolean" id="TRANSFORM" name="Transformation">false</OPTION>
+      <OUTPUT type="grid_list" id="GRIDS" name="Grids">9f22cac4b11e2a374bacf1f6a58d8e81</OUTPUT>
+    </TOOL>
+  </HISTORY>
+  <FILE>/tmp/zTmp//9f22cac4b11e2a374bacf1f6a58d8e81.zca</FILE>
+  <DESCRIPTION></DESCRIPTION>
+  <PROJECTION>
+    <OGC_WKT>PROJCS["NAD27 / UTM zone 13N",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-105],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","26713"]]</OGC_WKT>
+    <PROJ4>+proj=utm +zone=13 +datum=NAD27 +units=m +no_defs </PROJ4>
+    <EPSG>-1</EPSG>
+  </PROJECTION>
+</SAGA_METADATA>

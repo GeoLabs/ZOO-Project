@@ -1,0 +1,357 @@
+MAP
+  #EXTENT 7.0925089 50.6929186 7.1866156 50.7802943
+  EXTENT 40.877707 9.669148 44.492836 14.057419
+  FONTSET "/var/data/fonts/list.txt"
+  IMAGETYPE "png"
+  NAME "ZOO-Project_WXS_Server"
+  SIZE 2048 2048
+  STATUS ON
+  SYMBOLSET "/var/data/symbols.sym"
+  TRANSPARENT TRUE
+  UNITS METERS
+
+  OUTPUTFORMAT
+    NAME "geojson"
+    DRIVER "TEMPLATE"
+    MIMETYPE "application/json"
+    FORMATOPTION "FILE=template/geojson.js"
+  END
+
+  OUTPUTFORMAT
+    NAME "png"
+    MIMETYPE "image/png"
+    DRIVER "AGG/PNG"
+    EXTENSION "png"
+    IMAGEMODE RGBA
+    TRANSPARENT TRUE
+  END # OUTPUTFORMAT
+
+  OUTPUTFORMAT
+    NAME "kml"
+    MIMETYPE "application/vnd.google-earth.kml+xml"
+    DRIVER "KML"
+    EXTENSION "kml"
+    IMAGEMODE RGB
+    TRANSPARENT FALSE
+    FORMATOPTION "ATTACHMENT=mapserver.kml"
+  END # OUTPUTFORMAT
+
+  OUTPUTFORMAT
+    NAME "tiff"
+    MIMETYPE "image/tiff"
+    DRIVER "GDAL/GTiff"
+    EXTENSION "tif"
+    IMAGEMODE BYTE
+    TRANSPARENT FALSE
+  END # OUTPUTFORMAT
+
+  OUTPUTFORMAT
+    NAME "grd"
+    DRIVER "GDAL/AAIGRID"
+    EXTENSION "asc"
+    IMAGEMODE INT16
+    TRANSPARENT FALSE
+  END # OUTPUTFORMAT
+
+  OUTPUTFORMAT
+    NAME "cairopng"
+    MIMETYPE "image/png; mode=24bit"
+    DRIVER "CAIRO/PNG"
+    EXTENSION "png"
+    IMAGEMODE RGBA
+    TRANSPARENT TRUE
+  END # OUTPUTFORMAT
+
+  PROJECTION
+    "init=epsg:4326"
+  END # PROJECTION
+  LEGEND
+    KEYSIZE 20 10
+    KEYSPACING 5 5
+    LABEL
+      SIZE MEDIUM
+      OFFSET 0 0
+      SHADOWSIZE 1 1
+      TYPE BITMAP
+    END # LABEL
+    STATUS OFF
+  END # LEGEND
+
+  QUERYMAP
+    SIZE -1 -1
+    STATUS OFF
+    STYLE HILITE
+  END # QUERYMAP
+
+  SCALEBAR
+    INTERVALS 4
+    LABEL
+      SIZE MEDIUM
+      OFFSET 0 0
+      SHADOWSIZE 1 1
+      TYPE BITMAP
+    END # LABEL
+    SIZE 200 3
+    STATUS OFF
+    UNITS MILES
+  END # SCALEBAR
+
+  WEB
+    IMAGEPATH "/var/www/tmp"
+    IMAGEURL "http://127.0.0.1/tmp/"
+    METADATA
+      "wfs_getfeature_formatlist" "gml,geojson"
+      "mm_group_1"	"Legend,"
+      "mm_group_2"	"Group,|Legend;"
+      "ows_country"	"fr"
+      "ows_contactfacsimiletelephone"	"False"
+      "ows_contactvoicetelephone"	"+33 4 67 43 09 95"
+      "ows_keywordlist"	"WPS,GIS,buffer,MapMint,ZOO-Project"
+      "ows_encoding"	"utf-8"
+      "ows_city"	"Lattes"
+      "mmProjectName"	"WS2014"
+      "ows_contactperson"	"Gérald FENOY"
+      "ows_abstract"	"http://127.0.0.1/tmp//MainDescriptionMM1402423686.html"
+      "ows_contactposition"	"Developer"
+      "ows_rootlayer_title"	"ZOO_Project_Layer"
+      "ows_role"	"Dev"
+      "ows_enable_request"	"*"
+      "ows_stateorprovince"	"False"
+      #"wms_feature_info_mime_type" "text/plain"
+      #"wms_feature_info_mime_type" "text/html"
+      "wms_feature_info_mime_type" "application/json"
+      #"wms_feature_info_mime_type" "application/vnd.ogc.gml"
+      #"wms_feature_info_mime_type" "gml"
+      "ows_contactorganization"	"GeoLabs SARL"
+      "ows_service_onlineresource"	"http://www.geolabs.fr"
+      "ows_accessconstraints"	"none"
+      "ows_srs"	"EPSG:4326 EPSG:900913"
+      "ows_rootlayer_name"	"ZOO_Project_Layer"
+      "ows_title"	"MapMint Live Instance"
+      "ows_fees"	"None"
+      "ows_contactelectronicmailaddress"	"gerald@geolabs.fr"
+      "ows_address"	"1280, avenue des Platanes"
+      "mmTitle"	"WS2014"
+      "mm_group_0"	"Layers"
+      "ows_postcode"	"34970"
+    END # METADATA
+  END # WEB
+
+  LAYER
+    CONNECTION "/var/data/"
+    CONNECTIONTYPE OGR
+    DATA "new_points_2022"
+    #EXTENT 126 37 127.6 38.2 
+    ENCODING "utf-8"
+    TEMPLATE "dummy"
+    METADATA
+      "mmSearch"	"false"
+      "ows_keywordlist"	""
+      "mmOutColor"	"255 255 255 "
+      "mm_group"	"Group"
+      "mmName"	"yield"
+      "mmFilter"	"false"
+      "mmColor"	"0 0 0 "
+      "ows_abstract"	""
+      "gml_featureid"	"osm_id"
+      "ows_featureid"	"osm_id"
+      "mmSpatialQueryType"	"none"
+      "mmDSTN"	"/var/data/dirs/Oregon/"
+      "ows_name"	"points"
+      "ows_srs"	"EPSG:3857 EPSG:4326 EPSG:900913"
+      "mmField"	"type"
+      "ows_title"	""
+      "mmClass"	"uv"
+      "ows_fees"	""
+      "mmSpatialQuery"	"false"
+      "mmAlias"	""
+      "gml_include_items"	"all"
+      "gml_types"	"auto"
+      "mmExport"	"false"
+      "mmQuery"	"false"
+      "mmZFilter"	"false"
+    END # METADATA
+    NAME "points"
+    PROJECTION
+      "proj=longlat"
+      "datum=WGS84"
+      "no_defs"
+    END # PROJECTION
+    STATUS ON
+    TILEITEM "location"
+    TYPE POINT
+    UNITS METERS
+    CLASS
+      STYLE
+        COLOR 0 0 0
+        OUTLINECOLOR 0 0 0
+        SIZE 15
+        SYMBOL "circle"
+      END # STYLE
+    END # CLASS
+  END # LAYER
+
+  LAYER
+    CONNECTION "/var/data/"
+    CONNECTIONTYPE OGR
+    DATA "gis_osm_roads_free_3"
+    #EXTENT 126.064602 37.204118 127.5323490 38.166522
+    #ENCODING "utf-8"
+    TEMPLATE "dummy"
+    METADATA
+      "mmSearch"	"false"
+      "mmPattern_30"	"2.0 3.0"
+      "ows_keywordlist"	""
+      "mmOutColor"	"80 80 80 "
+      "mm_group"	"Group"
+      "mmName"	"unclassified"
+      "mmFilter"	"false"
+      "mmColor"	"192 192 192 "
+      "ows_abstract"	""
+      "mmPattern_21"	"2.0 3.0"
+      "gml_featureid"	"MMID"
+      "ows_featureid"	"MMID"
+      "mmPattern_25"	"2.0 3.0"
+      "mmPattern_27"	"1.0 3.0"
+      "mmSpatialQueryType"	"none"
+      "mmDSTN"	"Oregon"
+      "ows_name"	"roads"
+      "mmPattern_11"	"2.0 3.0"
+      "ows_srs"	"EPSG:3857 EPSG:4326 EPSG:900913"
+      "ows_title"	""
+      "mmField"	"type"
+      "mmPattern_16"	"2.0 3.0"
+      "mmClass"	"uv"
+      "ows_fees"	""
+      "mmSpatialQuery"	"false"
+      "mmAlias"	""
+      "gml_include_items"	"all"
+      "mmPattern_1"	"2.0 2.0"
+      "mmPattern_2"	"1.0 1.0"
+      "gml_types"	"auto"
+      "mmExport"	"false"
+      "mmZFilter"	"false"
+      "mmQuery"	"false"
+    END # METADATA
+    NAME "roads"
+    PROJECTION
+      "proj=longlat"
+      "datum=WGS84"
+      "no_defs"
+    END # PROJECTION
+    STATUS ON
+    TILEITEM "location"
+    TYPE LINE
+    UNITS METERS
+    CLASS
+      NAME "FIXME"
+      STYLE
+        COLOR 192 192 192
+        OPACITY 55
+        OUTLINECOLOR 192 192 192
+      END # STYLE
+    END # CLASS
+  END # LAYER
+
+  LAYER
+    CONNECTION "/home/user/data/"
+    CONNECTIONTYPE OGR
+    DATA "new_roads_001"
+    #EXTENT 126.064602 37.204118 127.5323490 38.166522
+    METADATA
+      "mm_group"	"Group"
+      "ows_featureid"	"id"
+      "gml_featureid"	"id"
+      "ows_name"	"new_roads_001"
+      "mmDSTN"	"Oregon"
+      "ows_srs"	"EPSG:3857 EPSG:4326 EPSG:900913"
+      "ows_title"	"new_roads_001"
+      "gml_include_items"	"all"
+      "gml_types"	"auto"
+    END # METADATA
+    NAME "new_roads_001"
+    PROJECTION
+      "proj=longlat"
+      "datum=WGS84"
+      "no_defs"
+    END # PROJECTION
+    STATUS ON
+    TILEITEM "location"
+    TYPE LINE
+    UNITS METERS
+    CLASS
+      STYLE
+        COLOR 125 125 255
+        OUTLINECOLOR 80 80 80
+        OUTLINEWIDTH 1.5
+        WIDTH 3
+      END # STYLE
+    END # CLASS
+  END # LAYER
+
+
+  LAYER
+    CONNECTION "PG:dbname=city_routing user=user"
+    #CONNECTION "/var/data/"
+    CONNECTIONTYPE OGR
+    #DATA "new_roads_001"
+    DATA "zoo_osm_view"
+    #EXTENT 126.064602 37.204118 127.5323490 38.166522
+    #ENCODING "utf-8"
+    TEMPLATE "dummy"
+    METADATA
+      "mmSearch"	"false"
+      "mmPattern_30"	"2.0 3.0"
+      "ows_keywordlist"	""
+      "mmOutColor"	"80 80 80 "
+      "mm_group"	"Group"
+      "mmName"	"unclassified"
+      "mmFilter"	"false"
+      "mmColor"	"192 192 192 "
+      "ows_abstract"	""
+      "mmPattern_21"	"2.0 3.0"
+      "gml_featureid"	"MMID"
+      "ows_featureid"	"MMID"
+      "mmPattern_25"	"2.0 3.0"
+      "mmPattern_27"	"1.0 3.0"
+      "mmSpatialQueryType"	"none"
+      "mmDSTN"	"Oregon"
+      "ows_name"	"ways"
+      "mmPattern_11"	"2.0 3.0"
+      "ows_srs"	"EPSG:3857 EPSG:4326 EPSG:900913"
+      "ows_title"	""
+      "mmField"	"type"
+      "mmPattern_16"	"2.0 3.0"
+      "mmClass"	"uv"
+      "ows_fees"	""
+      "mmSpatialQuery"	"false"
+      "mmAlias"	""
+      "gml_include_items"	"all"
+      "mmPattern_1"	"2.0 2.0"
+      "mmPattern_2"	"1.0 1.0"
+      "gml_types"	"auto"
+      "mmExport"	"false"
+      "mmZFilter"	"false"
+      "mmQuery"	"false"
+    END # METADATA
+    NAME "ways"
+    PROJECTION
+      "proj=longlat"
+      "datum=WGS84"
+      "no_defs"
+    END # PROJECTION
+    STATUS ON
+    TILEITEM "location"
+    TYPE LINE
+    UNITS METERS
+    CLASS
+      NAME "FIXME"
+      STYLE
+        COLOR 192 192 192
+        OPACITY 55
+        OUTLINECOLOR 192 192 192
+      END # STYLE
+    END # CLASS
+  END # LAYER
+
+END # MAP
