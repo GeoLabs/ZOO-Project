@@ -1,0 +1,47 @@
+======ZOO======
+0. review ZOO source code. what languages is it written? what are the potential flaws of it? C. its really really good!
+1. how to host ZOO?
+2. other alternatives of ZOO? az functions, ....
+3. next meeting with gerald
+	tell me more about the architecture of the software: 
+		how its build
+			what does each component do exactly? API, Kernel, Client, Services
+		how it supports all the languages?
+		what security mechanisems are integrated? 
+		how you think the performance is gonna be? 
+		how can I integrate my existing script in it?
+		what is your vision with Zoo project? What do you like it to become? 
+			what are the obstacles on the way? 
+		
+		
+	things I really liked:
+		service chaining
+		supporting all languages
+		
+		
+--------Zoo Hosting---------
+1. Amazong ECS
+1. Az App Services
+	--> Fail: Docker-compose is in preview. it doesnt support a long docker-compose file like the one we have.\
+1. Azure Container Apps
+	--> Fail: Single container only
+2. Az Functions (also try single scripts here)
+3. AKS
+4. ACI
+	--> Fail: only making a single container available online
+5. AZ VMs
+6. Automate it using DevOps Approach
+
+
+-----Zoo to AKS----
+- There is a problem with the websocketd deployment. you need to put the file ./zoo-project/zoo-services/utils/open-api/server/subscriber.py somewhere accessible. For eaxmple in docker dir (./docker/webscoketd/subscriber.py)
+
+
+----Automate AKS Deployment-----
+az group create -n azurelearn -l westeurope
+cd /mnt/d/web-development/ZOO-Project/
+az deployment group create -g azurelearn -n zoo-cluster-deployment --template-file ./aks-template/template.json --parameters "./aks-template/parameters.json"
+az acr login -n zoocr
+docker push zoocr.azurecr.io/zoo-project-websocketd:v1
+export KUBECONFIG=/mnt/c/Users/Gebruiker/.kube/config
+az aks get-credentials -g azurelearn -n zoo-k8-cluster
