@@ -1,4 +1,0 @@
-Content-Type: application/json;encoding=utf-8
-Status: 500 Not Implemented
-
-{"title":"NoApplicableCode","type":"NoApplicableCode","detail":"ZOO Kernel failed to process your request, receiving signal 11 = SIGSEGV "}
