@@ -1,0 +1,79 @@
+[storeModel]
+ Title = Upload ML files.
+ Abstract = the endpoint to upload ML files.
+ processVersion = 2
+ storeSupported = true
+ statusSupported = true
+ serviceProvider = model_service
+ serviceType = Python
+ <MetaData>
+   title = ml_upload
+ </MetaData>
+ <DataInputs>
+  [type]
+   Title = Input type
+   Abstract = The type of the model
+   minOccurs = 1
+   maxOccurs = 1
+   <MetaData>
+    title = type
+   </MetaData>
+   <LiteralData>
+    DataType = string
+    AllowedValues = onnx,tensorflow,pytorch
+    <Default>
+     value = onnx
+    </Default>
+   </LiteralData>
+   [model]
+   Title = Input file
+   Abstract = The file to upload
+   minOccurs = 1
+   maxOccurs = 1
+   <MetaData>
+    title = file to upload
+   </MetaData>
+   <ComplexData>
+    <Default>
+     mimeType = application/zip
+    </Default>
+    <Supported>
+     mimeType = application/zip
+    </Supported>
+    <Supported>
+     mimeType = application/x-bzip2
+    </Supported>
+    <Supported>
+     mimeType = application/x-gzip
+    </Supported>
+    <Supported>
+     mimeType = application/x-gtar
+    </Supported>
+    <Supported>
+     mimeType = application/x-tgz
+    </Supported>
+    <Supported>
+     mimeType = application/gzip
+    </Supported>
+    <Supported>
+     mimeType = application/x-hdf5
+    </Supported>
+   </ComplexData>
+ </DataInputs>
+ <DataOutputs>
+  [Result]
+   Title = Upload Result
+   Abstract = the result fo your upload request.
+   <MetaData>
+    title = My metadata
+   </MetaData>
+   <LiteralData>
+    DataType = string
+    <Default>
+     UOM = meter
+    </Default>
+    <Supported>
+     UOM = meter
+    </Supported>
+   </LiteralData>
+ </DataOutputs>

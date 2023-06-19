@@ -1,1 +1,4 @@
 .idea/
+deploy-to-k8.yaml
+websocketdDev/
+docker/tmp/

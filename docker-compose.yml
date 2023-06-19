@@ -2,7 +2,7 @@ version: '3'
 services:
   zookernel:
     # platform: linux/amd64
-    image: djayzen/zookernel:latest
+    image: zooproject/zoo-project:ml4eo-latest
     #build: .
     ports:
       - "80:80"
@@ -22,6 +22,8 @@ services:
       - ./docker/ws2022:/usr/lib/cgi-bin/ws2022
       - ./zoows2022/zoo-demo:/var/www/html/zoows-2022/
       - ./zoows2022/data:/var/data
+      - ./zoo-project/zoo-services/store-models/:/usr/lib/cgi-bin/models
+      - ./docker/storage:/storage
     depends_on:
       - pgbouncer
       - redis
@@ -30,7 +32,7 @@ services:
       - ZOO_REDIS_HOST=redis
   zoofpm:
     # platform: linux/amd64
-    image: djayzen/zookernel:latest
+    image: zooproject/zoo-project:ml4eo-latest
     volumes:
       - ./docker/main.cfg:/usr/lib/cgi-bin/main.cfg
       - ./docker/oas.cfg:/usr/lib/cgi-bin/oas.cfg
@@ -39,6 +41,8 @@ services:
       - ./docker/ws2022:/usr/lib/cgi-bin/ws2022
       - ./zoows2022/zoo-demo:/var/www/html/zoows-2022/
       - ./zoows2022/data:/var/data
+      - ./zoo-project/zoo-services/store-models/:/usr/lib/cgi-bin/models
+      - ./docker/storage:/storage
     depends_on:
       - rabbitmq
       - pgbouncer
