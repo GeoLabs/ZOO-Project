@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine:3
 ADD . /websocketd
 ADD ./subscriber.py /tmp/shell.py
 RUN    apk update && apk add --no-cache unzip curl python3 \
