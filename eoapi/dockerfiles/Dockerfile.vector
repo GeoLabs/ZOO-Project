@@ -1,0 +1,13 @@
+ARG PYTHON_VERSION=3.11
+
+FROM ghcr.io/vincentsarago/uvicorn-gunicorn:${PYTHON_VERSION}
+
+COPY eoapi/runtime/eoapi/vector /tmp/vector
+RUN pip install /tmp/vector
+RUN rm -rf /tmp/vector
+RUN pip show pydantic
+# RUN pip install pydantic=1.10.10
+# RUN pip install pydantic-settings
+
+ENV MODULE_NAME eoapi.vector.app
+ENV VARIABLE_NAME app

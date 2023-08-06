@@ -1,0 +1,15 @@
+ARG PYTHON_VERSION=3.11
+
+FROM ghcr.io/vincentsarago/uvicorn-gunicorn:${PYTHON_VERSION}
+
+ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
+
+RUN pip install psycopg[binary,pool]
+
+COPY eoapi/runtime/eoapi/raster /tmp/raster
+RUN pip install /tmp/raster
+RUN rm -rf /tmp/raster
+# RUN apt-get install dos2unix
+
+ENV MODULE_NAME eoapi.raster.app
+ENV VARIABLE_NAME app

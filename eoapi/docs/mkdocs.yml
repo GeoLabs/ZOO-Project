@@ -1,0 +1,70 @@
+site_name: The Earth Observation API
+site_description: Create a full Earth Observation API with Metadata, Raster and Vector services.
+
+docs_dir: 'src'
+site_dir: 'build'
+
+repo_name: "developmentseed/eoAPI"
+repo_url: "https://github.com/developmentseed/eoAPI"
+
+extra:
+  social:
+    - icon: "fontawesome/brands/github"
+      link: "https://github.com/developmentseed"
+    - icon: "fontawesome/brands/twitter"
+      link: "https://twitter.com/developmentseed"
+    - icon: "fontawesome/brands/linkedin"
+      link: "https://www.linkedin.com/company/development-seed"
+    - icon: "fontawesome/solid/rss"
+      link: "https://developmentseed.org/blog"
+
+nav:
+  - Home: "index.md"
+  - Intro: "intro.md"
+  - Services: "services.md"
+  - Deployment: "deployment.md"
+  - Development - Contributing: "contributing.md"
+
+
+plugins:
+  - search
+
+theme:
+  name: material
+  custom_dir: src/overrides/
+  palette:
+    primary: black
+    scheme: default
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+  favicon: img/favicon.ico
+  logo: img/logo.png
+
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - codehilite:
+      guess_lang: false
+  - def_list
+  - footnotes
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret:
+      insert: false
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.escapeall:
+      hardbreak: true
+      nbsp: true
+  - pymdownx.magiclink:
+      hide_protocol: true
+      repo_url_shortener: true
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - toc:
+      permalink: true

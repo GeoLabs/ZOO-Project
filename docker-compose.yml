@@ -1,27 +1,34 @@
+# TODO:
+  # check ports --> check
+  # Check db: can we merge dbs? not a good idea. its much easier to have them work seperately on 2 db image of postgres. see https://stackoverflow.com/questions/46668233/multiple-databases-in-docker-and-docker-compose
+  # check env varaibles --> check
+  # check web servers: nginx --> check
+  # network: what does the network part do?
 version: '3'
 services:
   zookernel:
+    container_name: zoo.kernel
     platform: linux/amd64
     image: djayzen/zookernel:latest
     #build: .
     ports:
       - "80:80"
     volumes:
-      - ./docker/main.cfg:/usr/lib/cgi-bin/main.cfg
-      - ./docker/oas.cfg:/usr/lib/cgi-bin/oas.cfg
-      - ./docker/default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./zoo/docker/main.cfg:/usr/lib/cgi-bin/main.cfg
+      - ./zoo/docker/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./zoo/docker/default.conf:/etc/apache2/sites-available/000-default.conf
       # Uncomment below to expose a process named org.n52.javaps.test.EchoProcess
       #- ./zoo-project/zoo-services/echo-py/cgi-env:/usr/lib/cgi-bin/org/n52/javaps/test
-      - ./zoo-project/zoo-services/echo-py/cgi-env/echo_service.py:/usr/lib/cgi-bin/echo_service.py
-      - ./zoo-project/zoo-services/echo-py/cgi-env/echo.zcfg:/usr/lib/cgi-bin/echo.zcfg
-      - ./zoo-project/zoo-services/utils/open-api/server/publish.py:/usr/lib/cgi-bin/publish.py
-      - ./zoo-project/zoo-services/utils/open-api/server/subscriber.py:/usr/lib/cgi-bin/subscriber.py
-      - ./docker/mapserver.conf:/mapserver/etc/mapserver.conf
-      - ./docker/.htaccess:/var/www/html/.htaccess
-      - ./zoo-project/zoo-services/utils/open-api/templates/index.html:/var/www/index.html
-      - ./zoo-project/zoo-services/utils/open-api/static:/var/www/html/static
-      - ./docker/com:/usr/com/zoo-project
-      - ./docker/tmp:/tmp/zTmp
+      - ./zoo/zoo-project/zoo-services/echo-py/cgi-env/echo_service.py:/usr/lib/cgi-bin/echo_service.py
+      - ./zoo/zoo-project/zoo-services/echo-py/cgi-env/echo.zcfg:/usr/lib/cgi-bin/echo.zcfg
+      - ./zoo/zoo-project/zoo-services/utils/open-api/server/publish.py:/usr/lib/cgi-bin/publish.py
+      - ./zoo/zoo-project/zoo-services/utils/open-api/server/subscriber.py:/usr/lib/cgi-bin/subscriber.py
+      - ./zoo/docker/mapserver.conf:/mapserver/etc/mapserver.conf
+      - ./zoo/docker/.htaccess:/var/www/html/.htaccess
+      - ./zoo/zoo-project/zoo-services/utils/open-api/templates/index.html:/var/www/index.html
+      - ./zoo/zoo-project/zoo-services/utils/open-api/static:/var/www/html/static
+      - ./zoo/docker/com:/usr/com/zoo-project
+      - ./zoo/docker/tmp:/tmp/zTmp
     depends_on:
       - pgbouncer
       - redis
@@ -29,18 +36,19 @@ services:
     environment:
       - ZOO_REDIS_HOST=redis
   zoofpm:
+    container_name: zoo.fpm
     platform: linux/amd64
     image: djayzen/zookernel:latest
     volumes:
-      - ./docker/main.cfg:/usr/lib/cgi-bin/main.cfg
-      - ./docker/oas.cfg:/usr/lib/cgi-bin/oas.cfg
-      - ./docker/tmp:/tmp/zTmp
-      - ./docker/mapserver.conf:/mapserver/etc/mapserver.conf
-      - ./docker/com:/usr/com/zoo-project
+      - ./zoo/docker/main.cfg:/usr/lib/cgi-bin/main.cfg
+      - ./zoo/docker/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./zoo/docker/tmp:/tmp/zTmp
+      - ./zoo/docker/mapserver.conf:/mapserver/etc/mapserver.conf
+      - ./zoo/docker/com:/usr/com/zoo-project
       # Uncomment below to expose a process named org.n52.javaps.test.EchoProcess
-      #- ./zoo-project/zoo-services/echo-py/cgi-env:/usr/lib/cgi-bin/org/n52/javaps/test
-      - ./zoo-project/zoo-services/echo-py/cgi-env/echo_service.py:/usr/lib/cgi-bin/echo_service.py
-      - ./zoo-project/zoo-services/echo-py/cgi-env/echo.zcfg:/usr/lib/cgi-bin/echo.zcfg
+      #- ./zoo/zoo-project/zoo-services/echo-py/cgi-env:/usr/lib/cgi-bin/org/n52/javaps/test
+      - ./zoo/zoo-project/zoo-services/echo-py/cgi-env/echo_service.py:/usr/lib/cgi-bin/echo_service.py
+      - ./zoo/zoo-project/zoo-services/echo-py/cgi-env/echo.zcfg:/usr/lib/cgi-bin/echo.zcfg
     depends_on:
       - rabbitmq
       - pgbouncer
@@ -48,8 +56,9 @@ services:
       - ZOO_RABBITMQ_HOST=rabbitmq
     command: [ "/startUp.sh" ]
   websocketd:
+    container_name: zoo.websocketd
     #platform: linux/amd64
-    build: ./docker/websocketd
+    build: ./zoo/docker/websocketd
     depends_on:
       - redis
     ports:
@@ -57,9 +66,10 @@ services:
     environment:
       - ZOO_REDIS_HOST=redis
     volumes:
-      - ./zoo-project/zoo-services/utils/open-api/server/subscriber.py:/shell.py
+      - ./zoo/zoo-project/zoo-services/utils/open-api/server/subscriber.py:/shell.py
     command: ["--port=8888", "/shell.py"]
   pg:
+    container_name: zoo.pg
     #platform: linux/amd64
     image: postgres:12.10-alpine
     restart: always
@@ -69,12 +79,13 @@ services:
       POSTGRES_DB: zoo
     volumes:
       # Load the zoo kernel schema
-      - ./zoo-project/zoo-kernel/sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./zoo/zoo-project/zoo-kernel/sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       # Load the async AMQP schema
-      - ./zoo-project/zoo-kernel/sql/async_amqp.sql:/docker-entrypoint-initdb.d/2-schema.sql
+      - ./zoo/zoo-project/zoo-kernel/sql/async_amqp.sql:/docker-entrypoint-initdb.d/2-schema.sql
     depends_on:
       - rabbitmq
   pgbouncer:
+    container_name: zoo.pgbouncer
     #platform: linux/amd64
     image: edoburu/pgbouncer:1.12.0
     environment:
@@ -86,8 +97,155 @@ services:
     depends_on:
       - pg
   redis:
+    container_name: zoo.redis
     image: redis:6.0.9
   rabbitmq:
+    container_name: zoo.rabitmq
     image: rabbitmq:3.8.9-management-alpine
     volumes:
-      - ./docker/definitions.json:/etc/rabbitmq/definitions.json
+      - ./zoo/docker/definitions.json:/etc/rabbitmq/definitions.json
+####### eoapi services #####
+  stac:
+    container_name: eoapi.stac
+    build:
+      context: .
+      dockerfile: eoapi/dockerfiles/Dockerfile.stac
+    ports:
+      - "${MY_DOCKER_IP:-127.0.0.1}:8081:8081"
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8081
+      - HOST=0.0.0.0
+      - PORT=8081
+      - ENVIRONMENT=local
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#web_concurrency
+      - WEB_CONCURRENCY=10
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#workers_per_core
+      # - WORKERS_PER_CORE=1
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#max_workers
+      # - MAX_WORKERS=10
+      # Postgres connection
+      - POSTGRES_USER=username
+      - POSTGRES_PASS=password
+      - POSTGRES_DBNAME=postgis
+      - POSTGRES_HOST_READER=database
+      - POSTGRES_HOST_WRITER=database
+      - POSTGRES_PORT=5432
+      - DB_MIN_CONN_SIZE=1
+      - DB_MAX_CONN_SIZE=10
+      # https://github.com/developmentseed/eoAPI/issues/16
+      # - TITILER_ENDPOINT=raster
+      - TITILER_ENDPOINT=http://127.0.0.1:8082
+    depends_on:
+      - database
+      - raster
+    command:
+      bash -c "bash /tmp/scripts/wait-for-it.sh -t 120 -h database -p 5432 && /start.sh"
+    volumes:
+      - ./eoapi/dockerfiles/scripts:/tmp/scripts
+
+  raster:
+    container_name: eoapi.raster
+    # At the time of writing, rasterio and psycopg wheels are not available for arm64 arch
+    # so we force the image to be built with linux/amd64
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: eoapi/dockerfiles/Dockerfile.raster
+    ports:
+      - "${MY_DOCKER_IP:-127.0.0.1}:8082:8082"
+    environment:
+      # Application
+      - HOST=0.0.0.0
+      - PORT=8082
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#web_concurrency
+      - WEB_CONCURRENCY=1
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#workers_per_core
+      - WORKERS_PER_CORE=1
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#max_workers
+      - MAX_WORKERS=10
+      # Postgres connection
+      - POSTGRES_USER=username
+      - POSTGRES_PASS=password
+      - POSTGRES_DBNAME=postgis
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - DB_MIN_CONN_SIZE=1
+      - DB_MAX_CONN_SIZE=10
+      # - DB_MAX_QUERIES=10
+      # - DB_MAX_IDLE=10
+      # GDAL Config
+      - CPL_TMPDIR=/tmp
+      - GDAL_CACHEMAX=75%
+      - GDAL_INGESTED_BYTES_AT_OPEN=32768
+      - GDAL_DISABLE_READDIR_ON_OPEN=EMPTY_DIR
+      - GDAL_HTTP_MERGE_CONSECUTIVE_RANGES=YES
+      - GDAL_HTTP_MULTIPLEX=YES
+      - GDAL_HTTP_VERSION=2
+      - VSI_CACHE=TRUE
+      - VSI_CACHE_SIZE=536870912
+      # TiTiler Config
+      - MOSAIC_CONCURRENCY=1
+      # AWS S3 endpoint config
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      # API Config
+      - EOAPI_RASTER_ENABLE_MOSAIC_SEARCH=TRUE
+    depends_on:
+      - database
+    command:
+      bash -c "bash /tmp/scripts/wait-for-it.sh -t 120 -h database -p 5432 && /start.sh"
+    volumes:
+      - ./eoapi/dockerfiles/scripts:/tmp/scripts
+
+  vector:
+    container_name: eoapi.vector
+    build:
+      context: .
+      dockerfile: eoapi/dockerfiles/Dockerfile.vector
+    ports:
+      - "${MY_DOCKER_IP:-127.0.0.1}:8083:8083"
+    environment:
+      # Application
+      - HOST=0.0.0.0
+      - PORT=8083
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#web_concurrency
+      - WEB_CONCURRENCY=10
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#workers_per_core
+      # - WORKERS_PER_CORE=1
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#max_workers
+      # - MAX_WORKERS=10
+      # Postgres connection
+      - POSTGRES_USER=username
+      - POSTGRES_PASS=password
+      - POSTGRES_DBNAME=postgis
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - DB_MIN_CONN_SIZE=1
+      - DB_MAX_CONN_SIZE=10
+    command:
+      bash -c "bash /tmp/scripts/wait-for-it.sh -t 120 -h database -p 5432 && /start.sh"
+    depends_on:
+      - database
+    volumes:
+      - ./eoapi/dockerfiles/scripts:/tmp/scripts
+
+  database:
+    container_name: eoapi.db
+    image: ghcr.io/stac-utils/pgstac:v0.7.10
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgis
+      - PGUSER=username
+      - PGPASSWORD=password
+      - PGDATABASE=postgis
+    ports:
+      - "${MY_DOCKER_IP:-127.0.0.1}:5439:5432"
+    command: postgres -N 500
+    volumes:
+      - ./eoapi/.pgdata:/var/lib/postgresql/data
+
+networks:
+  default:
+    name: eoapi-network
