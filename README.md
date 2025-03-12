@@ -68,3 +68,5 @@ docker-compose up
 ````
 
 Then, from your favorite browser, just load the following URL: http://localhost/ and get immediate access to the 700+ ZOO-Services through WPS and OGC API - Processes depending on your preferences 🎉.
+
+Simple addition
