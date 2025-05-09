@@ -37,8 +37,8 @@ deploy:
           #cookiecutter.templateUrl: https://github.com/EOEPCA/eoepca-proc-service-template.git
           #cookiecutter.templateBranch: feature/python3.8
           # Standard cookiecutter
-          cookiecutter.templateUrl: https://github.com/eoap/zoo-service-template.git
-          cookiecutter.templateBranch: feature-secrets-nodeselector-imagepullsecrets
+          cookiecutter.templateUrl: https://github.com/GeoLabs/zoo-service-template.git
+          cookiecutter.templateBranch: axis3-dynamic-stageout
           filter_in.enabled: true
           filter_out.enabled: true
           zoofpm.image.repository: "{{.IMAGE_REPO_zoodruimage}}"
