@@ -218,6 +218,7 @@ files:
                 cat_url = sys.argv[1]
                 bucket = sys.argv[2]
                 subfolder = sys.argv[3]
+                [INIT_TEMPLATE]
                 collection_id = subfolder
 
                 print(f"cat_url: {cat_url}", file=sys.stderr)
