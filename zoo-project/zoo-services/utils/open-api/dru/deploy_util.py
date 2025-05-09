@@ -24,6 +24,7 @@
 #
 
 import sys
+import os
 import json
 import yaml
 import re
@@ -415,22 +416,29 @@ class Process:
                 cur.execute("INSERT INTO CollectionDB.ows_Format (def,primitive_format_id) VALUES "+
                             "(true,(SELECT id from CollectionDB.PrimitiveFormats WHERE mime_type='{0}' LIMIT 1));".
                             format(current_content_type))
-                cur.execute("INSERT INTO CollectionDB.ows_DataDescription (format_id) VALUES ((SELECT last_value FROM CollectionDB.ows_Format_id_seq));")
+                if input.namespace is not None:
+                    cur.execute(f"INSERT INTO CollectionDB.ows_DataDescription (format_id,data_format_id) VALUES ((SELECT last_value FROM CollectionDB.ows_Format_id_seq),(SELECT id from CollectionDB.PrimitiveDataFormats where cwl_type=$q${input.type}$q$));")
+                else:
+                    cur.execute("INSERT INTO CollectionDB.ows_DataDescription (format_id) VALUES ((SELECT last_value FROM CollectionDB.ows_Format_id_seq));")
             else:
-                cur.execute("INSERT INTO CollectionDB.LiteralDataDomain (def,data_type_id) VALUES "+
-                          "(true,(SELECT id from CollectionDB.PrimitiveDatatypes where name = $q${0}$q$));".format(input.type))
-                if input.possible_values:
-                    for i in range(len(input.possible_values)):
-                        cur.execute("INSERT INTO CollectionDB.AllowedValues (allowed_value) VALUES ($q${0}$q$);".format(input.possible_values[i]))
-                        cur.execute("INSERT INTO CollectionDB.AllowedValuesAssignment (literal_data_domain_id,allowed_value_id) VALUES ("+
-                                        "(select last_value as id from CollectionDB.ows_DataDescription_id_seq),"+
-                                        "(select last_value as id from CollectionDB.AllowedValues_id_seq)"
-                                        ");")
-                if input.default_value:
-                    cur.execute("UPDATE CollectionDB.LiteralDataDomain"+
-                                    " set default_value = $q${0}$q$ ".format(input.default_value)+
-                                    " WHERE id = "+
-                                    "  ((SELECT last_value FROM CollectionDB.ows_DataDescription_id_seq));")
+                if input.is_bbox:
+                    cur.execute("INSERT INTO CollectionDB.BoundingBoxData (format_id) VALUES (NULL);")
+
+                else:
+                    cur.execute("INSERT INTO CollectionDB.LiteralDataDomain (def,data_type_id) VALUES "+
+                            "(true,(SELECT id from CollectionDB.PrimitiveDatatypes where name = $q${0}$q$));".format(input.type))
+                    if input.possible_values:
+                        for i in range(len(input.possible_values)):
+                            cur.execute("INSERT INTO CollectionDB.AllowedValues (allowed_value) VALUES ($q${0}$q$);".format(input.possible_values[i]))
+                            cur.execute("INSERT INTO CollectionDB.AllowedValuesAssignment (literal_data_domain_id,allowed_value_id) VALUES ("+
+                                            "(select last_value as id from CollectionDB.ows_DataDescription_id_seq),"+
+                                            "(select last_value as id from CollectionDB.AllowedValues_id_seq)"
+                                            ");")
+                    if input.default_value:
+                        cur.execute("UPDATE CollectionDB.LiteralDataDomain"+
+                                        " set default_value = $q${0}$q$ ".format(input.default_value)+
+                                        " WHERE id = "+
+                                        "  ((SELECT last_value FROM CollectionDB.ows_DataDescription_id_seq));")
 
             cur.execute(("INSERT INTO CollectionDB.ows_Input (identifier,title,abstract,min_occurs,max_occurs) VALUES "+
                       "($q${0}$q$,"+
@@ -444,6 +452,8 @@ class Process:
                                          999 if input.max_occurs == 0 else input.max_occurs))
             cur.execute("INSERT INTO CollectionDB.InputDataDescriptionAssignment (input_id,data_description_id) VALUES ((select last_value as id from CollectionDB.Descriptions_id_seq),(select last_value from CollectionDB.ows_DataDescription_id_seq));");
             cur.execute("INSERT INTO CollectionDB.ProcessInputAssignment(process_id,input_id) VALUES((select id from pid),(select last_value as id from CollectionDB.Descriptions_id_seq));")
+
+
         # Output treatment
         for output in self.outputs:
             if output.is_complex:
@@ -455,7 +465,8 @@ class Process:
                               ))
             else:
                 pass
-            cur.execute("INSERT INTO CollectionDB.ows_DataDescription (format_id) VALUES ((SELECT last_value FROM CollectionDB.ows_Format_id_seq));")
+            local_format=os.environ['ZOO_OUTPUT_FORMAT'] if 'ZOO_OUTPUT_FORMAT' in os.environ else 'geojson-feature-collection'
+            cur.execute(f"INSERT INTO CollectionDB.ows_DataDescription (format_id,data_format_id) VALUES ((SELECT last_value FROM CollectionDB.ows_Format_id_seq),(SELECT id from CollectionDB.PrimitiveDataFormats where short_name='{local_format}'));")
             cur.execute("INSERT INTO CollectionDB.ows_Output"+
                       "(identifier,title,abstract)"+
                       " VALUES "+
@@ -561,10 +572,13 @@ class ProcessInput:
         self.max_occurs = 1
         self.default_value = None
         self.possible_values = None
-        self.is_complex = False  # TODO
+        self.is_complex = False
+        self.is_bbox = False
         self.is_file = False
         self.file_content_type = None
         self.is_directory = False
+        self.namespace = None
+        self.is_array = False
 
     @classmethod
     def create_from_cwl(cls, input, trim_len):
@@ -582,13 +596,31 @@ class ProcessInput:
 
         return process_input
 
+    def handle_custom_types(self, type_name):
+        schema_parts=type_name.split("#")
+        type_name = None
+        if len(schema_parts)>1 and schema_parts[0].count("ogc.yaml")>0 and schema_parts[1]=="BBox":
+            self.is_bbox = True
+            type_name = None
+        if len(schema_parts)>1 and schema_parts[0].count("stac.yaml")>0:
+            self.is_complex = True
+            type_name = schema_parts[1]
+            self.namespace = schema_parts[0]
+            self.file_content_type = "application/json"
+        if len(schema_parts)>1 and schema_parts[0].count("geojson.yaml")>0:
+            self.is_complex = True
+            self.namespace = schema_parts[0]
+            type_name = schema_parts[1]
+            self.file_content_type = "application/json"
+        return type_name
+
     def set_type_from_cwl(self, input, trim_len):
-        
+        type_name = None
         # if input.type is something like ['null', 'typename'],
         # it means the input is optional and of type typename
+        current_type_is_array=False
         if isinstance(input.type, str) or (isinstance(input.type, list) and len(input.type) == 2 and input.type[0] == 'null'):
             type_name = input.type[1] if isinstance(input.type, list) else input.type
-            current_type_is_array=False if not(isinstance(input.type, list)) else True
             self.is_array=current_type_is_array
             if isinstance(type_name, cwl_v1_0.InputEnumSchema):
                 self.possible_values = [str(s)[trim_len+len(self.identifier)+2:] for s in type_name.symbols]
@@ -624,15 +656,20 @@ class ProcessInput:
                 elif type_name == "Directory":
                     type_name = "string"
                     self.file_content_type = "text/plain"
+                elif type_name.count("schemas")>0:
+                    type_name = self.handle_custom_types(type_name)
                 else:
                     type_name = None
+            elif type_name.count("schemas")>0:
+                type_name = self.handle_custom_types(type_name)
+
             else:
                 raise Exception(
                     "Unsupported 0 type for input '{0}': {1}".format(input.id, type_name)
                 )
 
             self.type = type_name
-            self.min_occurs = 0 if (isinstance(input.type, list) or input.default) else 1
+            self.min_occurs = 0 if ((isinstance(input.type, list) and input.type[0]=='null')) else 1
             # How should we set the maximum length of an array for instance?
             # We currently set the default maximum to 1024
             self.max_occurs = 1 if not(current_type_is_array) else 1024
@@ -649,6 +686,8 @@ class ProcessInput:
             elif type_name == "Directory":
                 type_name = "string"
                 self.file_content_type = "text/plain"
+            elif type_name.count("schemas")>0:
+                type_name = self.handle_custom_types(type_name)
             else:
                 type_name = None
             self.min_occurs = 1
